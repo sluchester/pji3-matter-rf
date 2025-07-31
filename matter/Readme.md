@@ -19,3 +19,4 @@
 - [Github espressif.](https://github.com/espressif/esp-matter)
 - [Github matter](https://github.com/project-chip/connectedhomeip)
 - [ESPRESSIF com links, SDK e explicações](https://www.espressif.com/en/solutions/device-connectivity/esp-matter-solution)
+- [Developing with Matter SDK](https://docs.espressif.com/projects/esp-matter/en/latest/esp32/developing.html)
