@@ -8,7 +8,11 @@
 - Playlist de vídeos da ESP 32 salva na biblioteca do youtube
 - Acesso ao zerocode: keep.
 - Acessado o link: https://zerocode.espressif.com/home/new-config/ZRKMYMBRBOH7GPVQKXG5JZ/test-product.
-- Conectar a ESP 32 e selecionar o módulo: seguir o passo a passo descrito no site.
+- Conectar a ESP 32 e selecionar o tipo de módulo (a plataforma web irá reconhecer a porta serial conectada; se não reconhecer, provavelmente é sua ESP).
+- Seguir o passo a passo descrito no site que está bem explicado.
+    - Há vários modos de teste para se usar o matter.
+    - Por exemplo: usei um circuito PWM para acender e apagar um LED. Apenas tive que colocar o resistor e o LED na porta desejada. Depois foram configurados o pulso do PWM e a porta em que ele seria aplicado.
+- Então basta apenas seguir o passo a passo de enviar o código para a ESP e escanear o código QRCode do matter gerado na própria interface.
 
 ## Links
 - [Ferramenta ESPLaunchpad.](https://github.com/espressif/esp-matter)
