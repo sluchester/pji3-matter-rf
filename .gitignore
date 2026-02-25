@@ -1,0 +1,23 @@
+# Ignorar pastas de saída do VS Code / LaTeX Workshop
+%OUTDIR%/
+OUTDIR/
+out/
+
+# Ignorar arquivos temporários e de log do LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+
+# Ignorar o PDF gerado (opcional, remova a linha abaixo se quiser versionar o PDF)
+# *.pdf
