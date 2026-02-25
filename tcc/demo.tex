@@ -1,0 +1,546 @@
+%-------------------------------------------------%
+% 2025-04-01 - Emerson Ribeiro de Mello - mello@ifsc.edu.br
+%-------------------------------------------------%
+% Sets aspect ratio to 16:9, and frame size to 160 mm by 90 mm.
+\documentclass[aspectratio=169]{beamer}
+
+% Sets aspect ratio to 4:3, and frame size to 128 mm by 96 mm
+% \documentclass{beamer}
+
+% Sets aspect ratio to 16:10, and frame size to 160 mm by 100 mm.
+% \documentclass[aspectratio=161]{beamer}
+
+\usepackage[english,brazil]{babel}
+
+
+\usepackage[style=abnt,noslsn,justify]{biblatex}
+\renewcommand*{\bibfont}{\small}
+\usepackage{csquotes}
+\addbibresource{referencias.bib}
+
+% \pgfdeclareimage[width=3cm]{ifsclogo}{img/ifsc-logo-h-branco.png}
+
+
+% Crie cores personalizadas para usar no tema
+\definecolor[named]{novaCor}{HTML}{303A52}
+\definecolor{verdeescuro}{RGB}{0,112,19}
+
+% Outras cores já definidas no tema
+% redwine
+% azulcinza
+% azulescuro
+% cyanIFSC
+% fundoIFSC
+% cinzaescuro
+% verdeifsc
+% vermelhoifsc
+% vermelhoifscclaro
+
+% Theme parameters
+\usetheme[
+    % foreground=redwine, % cor do texto (usado no título dos slides) 
+    % background=white, % cor do fundo dos slides
+    % textfg=black, % cor do texto nos slides
+    % titlefg=redwine, % cor do texto do slide de título
+    % titlebg=white, % cor do fundo do slide de título
+    % frametitlefg=white, % cor do texto do título do frame
+    % frametitlebg=redwine, % cor do fundo do título do frame
+    % sectionfg=redwine, % cor do texto do slide da seção
+    % sectionbg=white, % cor do fundo do slide de seção
+    % blocktitlefg=white, % cor do texto do título dos blocos
+    % blocktitlebg=redwine, % cor do fundo do título dos blocos
+    % blockbodyfg=cinzaescuro, % cor do texto dentro dos blocos
+    % itemsep=7pt % Espaçamento entre os itens das listas 
+]{ifsclean}
+
+
+
+% -------------------------------------------------%
+%              Título 
+% -------------------------------------------------%
+\title{Desenvolvimento de um Gateway de Integração para
+Dispositivos RF Legados (Fixed Code e Rolling Code)
+via Protocolo Matter}
+
+\subtitle{Projeto de TCC 2 agora 2. Caraca deu bom memu de novo? }
+
+\author{Luan de Barros Conceição sla}
+
+%\institute{luanbarrossantos@gmail.com}
+
+%\date{22 de dezembro de 2025}
+
+
+%-------------------------------------------------%
+\begin{document}
+% -------------------------------------------------%
+
+\begin{frame}[plain, noframenumbering]
+    \maketitle
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Licenciamento}
+    \licenciamentoLivre
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Agenda}
+    \tableofcontents
+\end{frame}
+% -------------------------------------------------%
+
+\section{Contexto e Motivação}
+
+\begin{frame}{Contexto}
+    \begin{itemize}
+        \item Advento do eletromagnetismo
+        \item Ondas eletromagnéticas
+        \item Primeiras faixas de Frequência
+        \item Necessidade de regulação
+        \item ITU
+        \item ANATEL
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Motivação}
+    \begin{itemize}
+        \item A automação residencial cresce com foco em conforto, eficiência e controle remoto
+        \item Grande parte dos dispositivos existentes utiliza RF em 433 MHz
+        \item Operam de forma isolada, sem integração com assistentes modernos
+        \item Fragmentação tecnológica
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Problema de Pesquisa}
+    \begin{itemize}
+        \item Dispositivos RF legados (433 MHz) não se integram nativamente a ecossistemas IoT modernos
+        \item Soluções atuais dependem de gateways proprietários e múltiplos aplicativos
+        \item Falta de interoperabilidade entre tecnologias antigas e novos padrões de aplicação
+    \end{itemize}
+\end{frame}
+
+\section{Objetivos}
+
+\begin{frame}{Objetivos}
+    \begin{itemize}
+        \item Desenvolver um gateway e um aplicativo para integrar dispositivos RF 433 MHz a ecossistemas modernos via protocolo Matter
+        \item Implementar captura e transmissão de sinais fixed code e rolling code
+        \item Permitir a configuração manual do tipo de dispositivo via aplicativo
+        \item Expor dispositivos como endpoints Matter
+        \item Validar a integração com assistentes virtuais comerciais
+    \end{itemize}
+\end{frame}
+
+
+\section{Fundamentação}
+
+\begin{frame}{Por quê 433 MHz?}
+    \begin{itemize}
+        \item Faixa ISM livre e amplamente regulamentada
+        \item Baixo custo de implementação
+        \item Maior alcance e melhor penetração em obstáculos que 2,4 GHz
+        \item Baixo consumo energético
+        \item Uso consolidado em portões, sensores, alarmes e controles remotos
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Modulações}
+    \begin{itemize}
+        \item ASK e OOK
+        \item OOK:
+        \begin{itemize}
+            \item Implementação simplificada
+            \item Eficiênciência energética
+            \item Sensível a ruído
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Fixed Code e Rolling Code}
+    \begin{itemize}
+        \item \textbf{Fixed Code}
+        \begin{itemize}
+            \item Código estático transmitido a cada acionamento
+            \item Implementação simples e baixo custo
+            \item Vulnerável a ataques de repetição
+        \end{itemize}
+        \item \textbf{Rolling Code}
+        \begin{itemize}
+            \item Código dinâmico baseado em sincronização
+            \item Maior segurança contra clonagem
+            \item Maior complexidade de implementação
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Protocolo Matter}
+    \begin{itemize}
+        \item Padrão interoperável
+        \item Transporte/Aplicação
+        \item Descoberta comissionável de dispositivos
+        \item Segurança
+        \item Praticidade
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Interoperabilidade e Protocolo Matter}
+    \begin{itemize}
+        \item Sanar a fragmentação entre ecossistemas IoT
+        \item Matter surge como padrão aberto e interoperável
+        \item Baseado em IP, com segurança nativa
+        \item Compatível com múltiplos fabricantes e assistentes
+        \item Pilha esp-matter da Espressif
+    \end{itemize}
+\end{frame}
+
+
+\section{Proposta de Solução}
+\begin{frame}{Proposta de Solução}
+    \begin{itemize}
+        \item Desenvolvimento de um gateway físico associado a um aplicativo móvel
+        \item O usuário define manualmente:
+        \begin{itemize}
+            \item Tipo de protocolo (fixed ou rolling code)
+            \item Tipo de dispositivo (lâmpada, tomada, portão etc.)
+            \item Modo de operação (escuta ou emissão)
+        \end{itemize}
+        \item O gateway expõe o dispositivo como um endpoint Matter
+    \end{itemize}
+\end{frame}
+
+% -------------------------------------------------%
+%      fazer um diagrama de blocos aqui            %
+% -------------------------------------------------%
+\begin{frame}{Arquitetura do Sistema}
+    \begin{itemize}
+        \item Dispositivos RF 433 MHz operam como dispositivos de borda
+        \item Gateway atua como intermediário e tradutor de protocolos
+        \item Comunicação com hubs via Matter
+        \item Controle realizado por assistentes virtuais compatíveis
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Hardware Utilizado}
+    \begin{itemize}
+        \item \textbf{ESP 32}
+        \begin{itemize}
+            \item Conectividade Wi-Fi e BLE
+            \item Suporte à pilha esp-matter
+            \item Capacidade de processamento adequada ao gateway
+        \end{itemize}
+        \item \textbf{CC1101}
+        \begin{itemize}
+            \item Transceptor sub-GHz configurável
+            \item Suporte a modulações OOK/ASK
+            \item Maior robustez e seletividade
+            \item Aprovadamente testado
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Firmware e Ponte Matter}
+    \begin{itemize}
+        \item Firmware desenvolvido com ESP-IDF
+        \item Integração com a pilha esp-matter
+        \item Módulos principais:
+        \begin{itemize}
+            \item Captura e transmissão RF
+            \item Mapeamento de comandos
+            \item Exposição de endpoints Matter
+        \end{itemize}
+        \item Gateway atua como Matter Bridge
+    \end{itemize}    
+\end{frame}
+
+\begin{frame}{Aplicativo de Configuração}
+    \begin{itemize}
+        \item Aplicativo responsável pela configuração do sistema
+        \item Comunicação local com o gateway
+        \item Funções principais:
+        \begin{itemize}
+            \item Cadastro de dispositivos RF
+            \item Definição de protocolo e tipo funcional
+            \item Associação a endpoints Matter
+        \end{itemize}
+        \item \textbf{Elimina a necessidade de múltiplos aplicativos proprietários}
+    \end{itemize}
+\end{frame}
+
+
+\section{Validação Experimental}
+\begin{frame}{Validação Experimental}
+    \begin{itemize}
+        \item Testes realizados com dispositivos RF reais
+        \item Cenários:
+        \begin{itemize}
+            \item Dispositivos Rolling Code
+            \item Dispositivos Fixed Code
+        \end{itemize}
+        \item Integração validada com hubs compatíveis com Matter
+        \item Avaliação de estabilidade, latência e confiabilidade
+    \end{itemize}
+\end{frame}
+
+\section{Obrigado!}
+
+
+% -------------------------------------------------%
+%               standard Mello                     %
+% -------------------------------------------------%
+
+% \section{Listas}
+
+
+% \begin{frame}{Lista de itens}
+%     \begin{enumerate}
+%         \item Primeiro item
+%         \begin{itemize}
+%             \item \Myhref{https://emersonmello.me}{Aqui tem um exemplo de \textit{link} para um \textit{site} usando o comando \texttt{Myhref}}
+%             \item Segundo item
+%         \end{itemize}
+%         \item Segundo item
+%         \item Terceiro item 
+%         \begin{itemize}
+%             \item Neste linha é apresentado um item que tem um texto grande que deverá ocupar mais de uma linha no slide. Assim, espera-se mostrar como será o alinhamento na margem esquerda
+%             \item Segundo item
+%         \end{itemize}
+%     \end{enumerate}
+% \end{frame}
+
+% \subsection{Animações}
+
+% \begin{frame}{Animação com lista de itens}
+% \begin{itemize}[<+->]
+%     \item\only<1>{Eu não sei quem criou o~\TeX}\only<2->{\st{Eu não sei quem criou o~\TeX}} 
+%     \item O~\TeX~foi criado por Donald Knuth
+%     \begin{itemize}
+%         \item<.-> O~\TeX~é um sistema de tipografia 
+%     \end{itemize}
+%     \item Leslie Lamport criou o~\LaTeX~\cite{lamport94}
+%     \begin{itemize}
+%         \item<.-> O~\LaTeX~é um conjunto de macros para o~\TeX 
+%     \end{itemize}
+%     \item Em \textcite{knuth74} temos um dos trabalhos mais importantes de Donald Knuth
+    
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}{Uso do \texttt{alert}}
+%     \begin{itemize}
+%         \item<1-| alert@1> Aparecerá desde do slide 1 e receberá destaque no slide 1
+%         \item<1-| alert@2> Aparecerá desde do slide 1 e receberá destaque no slide 2
+%         \item<1-| alert@3> Aparecerá desde do slide 1 e receberá destaque no slide 3
+%         \item<4-| alert@4> Aparecerá desde do slide 4 e receberá destaque no slide 4
+%     \end{itemize} 
+% \end{frame}
+
+% \subsection{Colunas}
+
+% \begin{frame}{Listas em colunas}
+%     \begin{columns}[t, onlytextwidth]
+%         \column{0.5\textwidth}
+%             \begin{itemize}
+%                 \item Item 1
+%                 \begin{itemize}
+%                     \item Subitem 1.1
+%                     \item Subitem 1.2
+%                 \end{itemize}
+%                 \item Item 2
+%                 \item Item 3
+%             \end{itemize}
+        
+%         \column{0.5\textwidth}
+%             \begin{enumerate}
+%                 \item First
+%                 \item Second
+%                 \begin{enumerate}
+%                     \item Sub-first
+%                     \item Sub-second
+%                 \end{enumerate}
+%                 \item Third
+%             \end{enumerate}
+%     \end{columns}
+% \end{frame}
+
+% \begin{frame}{Listas e figuras}
+% \begin{columns}
+%     \column{.5\linewidth}
+%      \begin{center}
+%         \includegraphics[width=\linewidth]{figs/4x3.png}
+%      \end{center}
+%     \column{.5\linewidth}
+%     \begin{itemize}
+%         \item Item 1
+%         \begin{itemize}
+%             \item Subitem 1.1
+%             \item Subitem 1.2
+%         \end{itemize}
+%         \item Item 2
+%         \item Item 3
+%     \end{itemize}
+% \end{columns} 
+% \end{frame}
+
+
+% \section{Blocos}
+
+
+% \begin{frame}{Blocos}
+%     \begin{block}{Esse é um bloco}
+%         Isso é um teste
+%     \end{block}
+%     \begin{block}{}
+%     Bloco sem título	
+%     \end{block}
+%     \begin{alertblock}{Alerta}
+%         Esse é um alerta
+%     \end{alertblock}
+
+%     \begin{exampleblock}{Exemplo}
+%         Esse é um exemplo
+%     \end{exampleblock}
+% \end{frame}
+
+
+% \begin{frame}{Blocos personalizados}
+
+%     \begin{informacao}
+%     Isso é uma mensagem de informação
+%     \end{informacao}
+    
+%     \begin{informacaoazul}
+%         Isso é uma mensagem de informação
+%     \end{informacaoazul}
+
+%     \begin{atencao}
+%         Isso é uma mensagem de atenção
+%     \end{atencao}
+    
+%     \begin{cuidado}
+%         Isso é uma mensagem de cuidado
+%     \end{cuidado}
+% \end{frame}
+
+% \begin{frame}[allowframebreaks]{Blocos personalizados}{Inspirados nos blocos Markdown do GitHub}
+% \begin{nota}
+%     Para apresentar uma informação útil
+% \end{nota}
+
+% \begin{tip}
+%     Para apresentar uma dica
+% \end{tip}
+
+% \begin{important}
+%     Informação importante que precisa ser destacada
+% \end{important}
+
+% \begin{warning}
+%     Algo que precisa ser observado com atenção
+% \end{warning}
+
+% \begin{caution}
+%     Para chamar a atenção do leitor para algo que pode ser perigoso
+% \end{caution}
+% \end{frame}
+
+
+% \begin{frame}{Horários}
+%     {Veja outros ícones em \url{https://ctan.org/pkg/fontawesome}}
+%     \begin{itemize}
+%         \item Horário das aulas 
+%         \begin{caixa}[azul]{white}{\faCalendar}
+%             \begin{itemize}
+%                 \item 15:40 -- 17:30 - quarta-feira
+%                 \item 13:30 -- 15:20 - quinta-feira
+%             \end{itemize}
+%         \end{caixa}
+%         \item Atendimento extraclasse
+%         \begin{caixa}[azul]{white}{\faCalendar}
+%             \begin{itemize}
+%                 \item 10:00 -- 12:00 - sexta-feira
+%             \end{itemize}
+%         \end{caixa}
+%     \end{itemize}
+% \end{frame}
+
+
+% \section{Figuras}
+
+% \begin{frame}{Figura 4x3}
+%     \begin{center}
+%         \includegraphics[height=.8\paperheight]{figs/4x3.png}
+%     \end{center}
+% \end{frame}
+    
+
+% \begin{frame}{Figura 16x9}
+% \begin{center}
+%     \includegraphics[width=.95\linewidth]{figs/16x9.png}
+% \end{center}
+% \end{frame}
+
+% \section{Tabelas}
+
+% \begin{frame}{Tabelas}
+% \begin{center}
+%     \begin{tabular}{l r r}\\\toprule
+%         Produto & Quantidade & Valor (R\$) \\\midrule
+%         Água    &      100   &   1,50 \\ 
+%         Banana  &       10   &   3,00 \\
+%         Maça    &        1   &   2,50 \\ \bottomrule
+%     \end{tabular}
+% \end{center}
+% \end{frame}
+
+% \section{Incluindo código fonte}
+
+
+% \begin{frame}[fragile]{Olá mundo em C}
+%     \lstinputlisting[style=ansic,caption={Olá mundo},label={cod:olac}]{codigos/olamundo.c}
+% \end{frame}
+
+% \begin{frame}[fragile]{Olá mundo em Java}
+% \begin{lstlisting}[style=java]
+% public class App{
+
+%     public static void main(String[] args){
+%         System.out.println("Olá mundo");
+%     }
+
+% }
+% \end{lstlisting}
+% \end{frame}
+
+% Para permitir que o código fonte seja quebrado em mais de um slide. Se as referências couberem em um único slide, então pode omitir o uso do allowframebreaks
+% \begin{frame}[allowframebreaks]{Referências}
+%     % para incluir todas as referências do arquivo referencias.bib, mesmo sem citá-las explicitamente com os comandos \cite ou \textcite
+%     \nocite{*}
+%     \printbibliography
+% \end{frame}
+    
+% Se não quiser usar o pacote biblatex, use o seguinte código
+% \begin{frame}{Referências}
+%     \nocite{*}
+%     \bibliography{referencias}
+%     \bibliographystyle{plain}
+% \end{frame}
+
+% \appendix
+
+% \section{Slides de backup}
+
+% \begin{frame}{Slide de backup}
+%     \usebeamercolor[fg]{normal text}
+%     Slides de backup são úteis para incluir materiais adicionais, necessários somente para ajudar a responder possíveis perguntas da plateia
+%     \vfill
+%     O pacote \texttt{appendixnumberbeamer} é usado para não numerar os slides de backup
+% \end{frame}
+
+
+\end{document}
